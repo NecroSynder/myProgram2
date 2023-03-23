@@ -1,27 +1,34 @@
+#include <chrono>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
+#include <thread>
 
 using namespace std;
 
 class Student {
-public:
+private:
   string name;
   string course;
   int id;
 
 public:
-  Student(string n, string c, int i) : name(n), course(c), id(i) {}
-  string getName() { return name; }
-  string getCourse() { return course; }
-  int getId() { return id; }
+  // Constructor
+  Student(const string &n, const string &c, int i)
+      : name(n), course(c), id(i) {}
+
+  // Accessor functions (defined inline)
+  inline string getName() const { return name; }
+  inline string getCourse() const { return course; }
+  inline int getId() const { return id; }
 };
 
+
 class StudentList {
-public:
+private:
   map<int, Student *> students;
 
 public:
@@ -39,7 +46,7 @@ public:
            << " | Course: " << student->getCourse() << " | ID: " << id << endl;
     }
   }
-  Student *searchByName(string name) {
+  Student *searchByName(const string &name) {
     for (auto const &[id, student] : students) {
       if (student->getName() == name) {
         return student;
@@ -47,7 +54,7 @@ public:
     }
     return nullptr;
   }
-  Student *searchByCourse(string course) {
+  Student *searchByCourse(const string &course) {
     for (auto const &[id, student] : students) {
       if (student->getCourse() == course) {
         return student;
@@ -74,7 +81,7 @@ public:
         int id;
         string name, course;
         stringstream ss(line);
-        ss >> id; // remove leading whitespace
+        ss >> id;          // remove leading whitespace
         ss.ignore(1, ','); // ignore the comma separator
         getline(ss, name, ',');
         getline(ss, course);
@@ -117,16 +124,22 @@ int main() {
   StudentList list;
   int choice;
   int Choice;
-  cout << "Do you have a File to load? (1: "
+  cout << "Disclaimer:" << endl;
+  cout << "\tWhen loading a file, you must input the filename with the file extension and only txt files." << endl;
+  cout << "\tExample: trial.txt" << endl;
+  std::this_thread::sleep_for(std::chrono::seconds(4));
+  cout << "\nDo you have a File to load? (1: "
           "Yes, "
           "2: No): ";
   cin >> Choice;
+  cout << endl;
+  cout << "Choose an option from 1 to 10." << endl;
   if (Choice == 1) {
     list.loadFromFile();
     list.showList(true); // display the loaded students
   }
   do {
-    cout << "\n\n1. Add student\n";
+    cout << "1. Add student\n";
     cout << "2. Delete student\n";
     cout << "3. Edit student\n";
     cout << "4. Show list\n";
@@ -170,11 +183,12 @@ int main() {
       if (s != nullptr) {
         string name, course;
         cout << "Enter new name: ";
-        cin >> name;
+        cin.ignore();
+        getline(cin, name);
         cout << "Enter new course: ";
-        cin >> course;
-        s->name = name;
-        s->course = course;
+        getline(cin, course);
+        s->getName() = name;
+        s->getCourse() = course;
         list.editStudent(id, s);
         cout << "Student edited.\n";
       } else {
@@ -182,6 +196,7 @@ int main() {
       }
       break;
     }
+    
     case 4:
       list.showList(); // display all students
       break;
@@ -229,7 +244,7 @@ int main() {
       list.loadFromFile();
       break;
     }
-    case 9: 
+    case 9:
       list.saveToFile();
       break;
     case 10:
