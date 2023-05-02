@@ -147,7 +147,6 @@ int main() {
     list.loadFromFile();
     list.showList(true); // display the loaded students
   }
-  cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^";
   cout << "\nChoose an option from 1 to 10." << endl;
   do {
     cout << "1. Add student\n";
